@@ -4,17 +4,13 @@ import java.util.Stack;
 public class fixparen {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 		Scanner in = new Scanner(System.in);
 		int times = in.nextInt();
 		
 		for(int i =0 ; i < times ; i++){
-			
-			
 			String inputParen = in.next();
 			char[] Paren = inputParen.toCharArray();
-//		
+
 			String leftBracket = in.next();
 			char[] priority = leftBracket.toCharArray();
 			
@@ -37,89 +33,37 @@ public class fixparen {
 					rightBracket = rightBracket + '>';
 					continue;
 				}
-			}
-						
+			}	
 			CharSequence seq = new String(inputParen);
-			
+
 			Stack<Character> bracket = new Stack<Character>();
+			Stack<Integer> bracket_offset = new Stack<Integer>();
 			
-//			StringBuffer clearParen = new StringBuffer();		
-//			StringBuffer partofParen = new StringBuffer();	
-		
-			StringBuilder clearParen = new StringBuilder();		
-			String partofParen = "";
-			
-			int threshold =1000;
-			int trigger = 0;
+			char[] clearParen = new char[Paren.length];
 			
 			for(int j = 0; j < Paren.length; j++){
 				if(leftBracket.contains(seq.subSequence(j, j+1))){
 					bracket.add(Paren[j]);
-					
+					bracket_offset.add(j);
+					clearParen[j] = (Paren[j]);
 				}
-							
-				if(bracket.size() != 0 && rightBracket.contains(seq.subSequence(j, j+1))){
-					StringBuffer tempParen = new StringBuffer();
+				if(rightBracket.contains(seq.subSequence(j, j+1))){
 				
 					char stackedBracket = bracket.pop();
-					
-					if(threshold > bracket.size()){
-						threshold = bracket.size();
-					}
-					else{
-						trigger++;
-					}
-					
-				
+					int stackedOffset = bracket_offset.pop();
 					
 					int stackedLeft = leftBracket.indexOf(stackedBracket);
 					int stackedRight = rightBracket.indexOf(Paren[j]);
-					
+				
 					if(stackedLeft < stackedRight){
-						if(trigger > 0){
-							tempParen.append(partofParen);
-							tempParen.append(leftBracket.charAt(stackedLeft));
-							tempParen.append(rightBracket.charAt(stackedLeft));
-							trigger--;
-						}
-						else{
-							tempParen.append(leftBracket.charAt(stackedLeft));
-							tempParen.append(partofParen);
-							tempParen.append(rightBracket.charAt(stackedLeft));
-						}
-						
-						
+						clearParen[j] = rightBracket.charAt(stackedLeft);
 					}
 					else{
-						if(trigger > 0){
-							tempParen.append(partofParen);
-							tempParen.append(leftBracket.charAt(stackedRight));
-							tempParen.append(rightBracket.charAt(stackedRight));
-							trigger--;
-
-						}
-						else{
-							tempParen.append(leftBracket.charAt(stackedRight));
-							tempParen.append(partofParen);
-							tempParen.append(rightBracket.charAt(stackedRight));
-						}
-						
+						clearParen[stackedOffset] = leftBracket.charAt(stackedRight);
+						clearParen[j] = rightBracket.charAt(stackedRight);
 					}
 					
-					partofParen = tempParen.toString();
-					//System.out.println(trigger);
-					
-					if(bracket.isEmpty() || j==Paren.length-1){
-						clearParen.append(tempParen);
-						partofParen = "";
-						trigger = 0;
-						threshold =1000;
-
-					}
-					
-				}
-				
-				
+				}		
 			}
 			System.out.println(clearParen);
 		}
